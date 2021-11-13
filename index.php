@@ -1,4 +1,18 @@
-<?php ?>
+<?php
+    //Función 1 para que salga un mensaje en caso de que se introduzcan números en vez de letras en los campos de nombre,
+    //apellido y ciudad.
+    function nom($string){
+        if(ctype_alpha($string) != true) {
+            $mensaje = "Has escrito un número en vez de una letra";
+        }
+
+        return $mensaje;
+
+    }
+    echo nom('jo');
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
