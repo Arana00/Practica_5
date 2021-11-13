@@ -1,15 +1,14 @@
 <?php
     //Función 1 para que salga un mensaje en caso de que se introduzcan números en vez de letras en los campos de nombre,
-    //apellido y ciudad.
+    //apellido y ciudad. Con expresión regular.
     function nom($string){
-        if(ctype_alpha($string) != true) {
+        $regex = "/[0, 9]/"; //No puede tener ningún número, en el caso de los número se cambiaría a [A-Za-zÑñ] para comprobar
+        //que no haya ninguna letra.
+        //La función preg_match devuelve uno cuando encuentra un número en la expresión
+        if (preg_match($regex,$string) != 1){
             $mensaje = "Has escrito un número en vez de una letra";
         }
-
         return $mensaje;
-
-    }
-    echo nom('jo');
 
 ?>
 
