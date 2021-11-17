@@ -17,7 +17,7 @@
     // teléfono o en el de código postal.
     function tel($string,$num)
     {
-        $regex = "/[0-9]{$num,$num}/"; //No puede tener letras,
+        $regex = "/[0-9]{ $num,$num}/"; //No puede tener letras,
         //La función preg_match devuelve uno cuando encuentra un número en la expresión
         if (preg_match($regex, $string) != 1) {
             $mensaje = "No todos tus caracteres son números o la cantidad de caracteres es diferente a 9";
