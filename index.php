@@ -13,6 +13,23 @@
         return $mensaje;
     }
 
+    //Escribe una función que devuelva un mensaje en caso de que el usuario escriba letras en el campo de entrada de
+    // teléfono o en el de código postal.
+    function let($string)
+    {
+        $regex = "/[A-Za-zÑñ]/"; //No puede tener letras,
+        //La función preg_match devuelve uno cuando encuentra un número en la expresión
+        if (preg_match($regex, $string) != 1) {
+            $mensaje = "Has escrito una letra en vez de un número";
+        }
+        return $mensaje;
+    }
+
+
+
+
+
+
     //Función para extraer ciudades de una lista
 
     $provincias = [];
@@ -25,6 +42,8 @@
             'provincia' => $separar[1]
         ];
     }
+
+    print_r($provincias[0]['codigo'].$provincias[0]['provincia'].'<br />');
 
     //CON EL IF COMPRUEBO QUE HE ENVIADO EL FORMULARIO
     if(isset($_POST['guardar'])) {
