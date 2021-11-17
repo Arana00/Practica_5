@@ -4,26 +4,28 @@
     //apellido y ciudad. Con expresión regular.
     function nom($string)
     {
-        $regex = "/[0, 9]/"; //No puede tener ningún número, en el caso de los número se cambiaría a [A-Za-zÑñ] para comprobar
+        $regex = "/[A-Za-zÑñ]/"; //No puede tener ningún número, en el caso de los número se cambiaría a [A-Za-zÑñ] para comprobar
         //que no haya ninguna letra.
         //La función preg_match devuelve uno cuando encuentra un número en la expresión
         if (preg_match($regex, $string) != 1) {
-            $mensaje = "Has escrito un número en vez de una letra";
+            $mensaje = "No todos tus caracteres son letras";
         }
         return $mensaje;
     }
 
     //Escribe una función que devuelva un mensaje en caso de que el usuario escriba letras en el campo de entrada de
     // teléfono o en el de código postal.
-    function let($string)
+    function tel($string,$num)
     {
-        $regex = "/[A-Za-zÑñ]/"; //No puede tener letras,
+        $regex = "/[0,9]{ $num,$num}/"; //No puede tener letras,
         //La función preg_match devuelve uno cuando encuentra un número en la expresión
         if (preg_match($regex, $string) != 1) {
-            $mensaje = "Has escrito una letra en vez de un número";
+            $mensaje = "No todos tus caracteres son números o la cantidad de caracteres es diferente a 9";
         }
         return $mensaje;
     }
+
+    print_r(tel(638291865,9));
 
 
 
