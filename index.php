@@ -120,8 +120,8 @@ if (isset($_POST['guardar'])) {
     if (empty($contrasena)){$error_contrasena = "Introduce una contraseña<br>";}
     if (empty($web)){$error_web = "Introduce una URL<br>";}
     if (empty($provSelect)) {$error_provincia = "Selecciona una provincia <br>";}
-    if (!empty($nombre) and !empty($apellidos) and !empty($email) and !empty($telefono)
-        and !empty($postal) and !empty($ciudad) and !empty($domicilio) and !empty($contrasena) and !empty($web)){
+    if ($nombre != '' or $apellido != '' or $email != '' or $telefono != ''
+        or $postal != '' or $ciudad != '' or $domicilio != '' or $contrasena != '' or $web != '' or $provSelect != ''){
         //Extraer emails de mis registros
         //me creo un array para almacenar mis datos del registro
         $todosDatos = [];
@@ -237,6 +237,7 @@ if (isset($_POST['guardar'])) {
                                                          placeholder="ejemplo@gmail.com">
                 <p class="error"><?php echo email($email);?></>
                 <p class="error"><?php echo $error_email ?></p>
+                <p class="error"><?php echo $error ?></p>
                 <label for="contrasena">Contraseña:</label> <input name="contrasena" id="contrasena" type="password"
                                                                    placeholder="**********">
                 <p class="error"><?php echo contrasenia($contrasena); ?></p>
@@ -254,3 +255,4 @@ if (isset($_POST['guardar'])) {
 
 </body>
 </html>
+
