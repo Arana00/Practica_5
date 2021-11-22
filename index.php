@@ -1,6 +1,6 @@
 <?php
 
-//Función para extraer ciudades de una lista
+//Expesión para extraer ciudades de una lista
 $provincias = [];
 $string = file_get_contents('cpProvincias.csv');
 $provincias_cod = explode("\n",$string);
@@ -72,6 +72,7 @@ function contrasenia($string)
     if($string != "") {
         return $mensaje;
     }
+
 }
 //Función para comprobar los carácteres de la contraseña
 function web($string)
@@ -103,26 +104,68 @@ if(isset($_POST['guardar'])) {
     $web = filter_input(INPUT_POST, 'web', FILTER_SANITIZE_STRING);
     $provSelect= filter_input(INPUT_POST, 'select', FILTER_SANITIZE_STRING);
 
-    //<--------------------ERROR DE CÓDIGO------------->
-    //Guardar los datos recogidos en un archivo csv
-    //creo mi array de campos
-    /*$datos = [$nombre, $apellido, $email, $telefono, $postal, $ciudad, $domicilio, $contrasena, $web, $provSelect];
-    //selecciono la ruta donde quiero que se me guarde y el nombre del fichero
-    $ruta = 'registros.csv';
-    //Función para guardar los datos del formulario en un archivo csv
-    function generarCSV($datos, $ruta, $delimitador){
-        $archivo = fopen($ruta, 'w');//abro mi archivo en la ruta que quería, la w le da las propiedades de apertura
-        // para solo escritura
-        foreach ($datos as $linea) {
-            fputcsv($archivo, $linea, $delimitador);//da formato a la linea de mis datos
+    //En caso de que los campos estén vacios
+    if (empty($nombre) or empty($apellidos) or empty($email) or empty($telefono)
+        or empty($postal) or empty($ciudad) or empty($domicilio) or empty($contrasena) or empty($web)){
+        $campoVacio = "El campo no puede estar vacío <br>";
+    }else {
+        //Extraer emails de mis registros
+        //me creo un array para almacenar mis datos del registro
+        $todosDatos = [];
+        //me saco mis registros para poder comparar el campo de email que necesito
+        $string_email = file_get_contents('registros.csv');
+        //uso el explode para separar mis diferentes líneas del fichero
+        $emails_reg = explode("\n", $string_email);
+        //hago un foreach para separar dentro de cada líea del fichero cada campo
+        foreach ($emails_reg as $linea) {
+            $separo = explode(";", $linea);
+            //relleno mi array con cada campo
+            $todosDatos[] = [
+                'nombre' => $separo[0],
+                'apellido' => $separo[1],
+                'email' => $separo[2],
+                'telefono' => $separo[3],
+                'postal' => $separo[4],
+                'ciudad' => $separo[5],
+                'domicilio' => $separo[6],
+                'contraseña' => $separo[7],
+                'web' => $separo[8]
+            ];
         }
-        rewind($archivo);//vuelve el puntero del archivo al principio
-        fclose($archivo);//cierra el archivo
+        //creo una variable contador que me va a ayudar a saber si tengo el email registrado o no
+        $contador = 0;
+        //hago un if para contabilizar las veces que esta en mi email en el caso de que mi array no este vacío
+        if ($todosDatos != "") {
+            foreach ($todosDatos as $correo) {
+                //hago un if para saber cuantas veces aparece en mi documento el email que se intenta introducir, va sumando al contador cada vez
+                //que encuentra una coincidencia
+                if ($email == $correo['email']) {
+                    $contador++;
+                }
+            }
+        }
+        //Guardar los datos recogidos en un archivo csv
+        //creo mi array de campos
+        $datos = [$nombre, $apellido, $email, $telefono, $postal, $ciudad, $domicilio, $contrasena, $web];
+        //uso la función file_put_contens() para escribir en mi archivo registros.csv
+        //Creo un if que tiene como condición que si el email que se introduce ya está en mi archivo, entonces no se insertan nuevos campos
+        //para ello uso mi variable contador la cual si está a 0 permitirá que se escriba en el fichero
+        if ($contador == 0) {
+            //hago un foreach para ir introduciendo dato a dato con el separador ;
+            foreach ($datos as $dato) {
+                //uso la función file_put_contents para escribir en mi archivo, le paso como parámetros el archivo, el dato
+                //que quiero escribir concatenado con ; como separador y pongo el FILE_APPEND para que no me sobreescriba
+                //el archivo sino que añada contenido
+                file_put_contents('registros.csv', $dato . ';', FILE_APPEND);
+            }
+            //hago otra escritura cuando acaba cada fila entera para que me haga un salto de línea
+            file_put_contents('registros.csv', "\n", FILE_APPEND);
+        } else {
+            //Si encuentra una coincidencia de email, manda un mensaje de alerta de que el email ya está registrado.
+            $error = "Esta cuenta de correo ya está registrada";
+        }
+
     }
-    generarCSV($datos, $ruta, $delimitador = ';');*/
-
-    //<--------------------ERROR DE CÓDIGO------------->
-
 
 }
 
@@ -140,12 +183,16 @@ if(isset($_POST['guardar'])) {
         <legend>Datos Personales</legend>
         <label for="nombre">Nombre:</label> <input name="nombre" id="nombre" type="text" placeholder="Jose">
         <?php echo letras($nombre); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="apellido">Apellidos:</label> <input name="apellido" id="apellido" type="text" placeholder="García Pérez"><br/>
         <?php echo letras($apellido); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="domicilio">Dirección:</label> <input name="domicilio" id="domicilio" type="text" placeholder="C. Alustante, 13"><br/>
+        <p class="error"><?php echo $campoVacio ?></p>
 
         <label for="ciudad">Ciudad:</label> <input name="ciudad" id="ciudad" type="text" placeholder="Madrid"><br/>
         <?php echo letras($ciudad); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="e">Provincia:</label>
         <select name="select">
             <option hidden selected>Selecciona una provincia</option>
@@ -155,15 +202,21 @@ if(isset($_POST['guardar'])) {
         </select>
         <label for="postal">Código postal:</label> <input name="postal" id="postal" type="text" placeholder="28002"><br/>
         <?php echo numeros($postal, 5, $provSelect); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="telefono">Teléfono:</label> <input name="telefono" id="telefono" type="tel" placeholder="123-45-67-89"><br/>
         <?php echo numeros($telefono, 9, $provSelect); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="email">Email:</label> <input name="email" id="email" type="email" placeholder="ejemplo@gmail.com">
-        <?php echo email($email); ?>
+        <?php echo email($email); echo $error;?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="contrasena">Contraseña:</label> <input name="contrasena" id="contrasena" type="password" placeholder="**********">
         <?php echo contrasenia($contrasena); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <label for="web">Web (debe empezar por http o https):</label> <input name="web" id="web" type="url" placeholder="www.holamundo.com">
         <?php echo web($web); ?>
+        <p class="error"><?php echo $campoVacio ?></p>
         <input class="boton" type="submit" name="guardar" value="Guardar">
+
     </fieldset>
 </form>
 
