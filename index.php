@@ -58,7 +58,7 @@ function email($string){
     }
 }
 
-//Función para comprobar una dirección web
+//Función para comprobar los carácteres de la contraseña
 function contrasenia($string)
 {
     $regex = "/((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9])).{8,16}/"; //Estructura, que pueda contener en
@@ -73,7 +73,7 @@ function contrasenia($string)
         return $mensaje;
     }
 }
-//Función para comprobar los carácteres de la contraseña
+//Función para comprobar una dirección web
 function web($string)
 {
     $regex = "/^http[s]?:\/\/[\w]+([\.]+[\w]+)+$/"; //EStructura. tiene que empezar obligatoriamente por http p https://,
