@@ -31,14 +31,12 @@ function letras($string)
 // teléfono o en el de código postal.
 function numeros($string, $num, $nProv)
 {
-    print_r('codigo postal'.$string.'<br/>');
     $regex = "/^[0-9]{" . $num . "}+$/"; //No puede tener letras, el ^ y +$ son para obligarle a que todo sean números
     //La función preg_match devuelve uno cuando comprueba que toda la expresion son numeros
     //La función strlen nos devuelve la longitus del string que la igualamos a la cantidad que necesitamos
     if (preg_match($regex, $string) != 1) {
         $mensaje = "No todos tus caracteres son números o la cantidad de caracteres es diferente a " . $num;
     }
-    print_r('codigo: '.$nProv.'<br/>');
     if ($nProv != substr($string, 0, 2) && $num == 5) {
         $mensProv = "la provincia no coincide con el CP";
     }
