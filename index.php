@@ -3,9 +3,9 @@
 //Expesión para extraer ciudades de una lista
 $provincias = [];
 $string = file_get_contents('cpProvincias.csv');
-$provincias_cod = explode("\n",$string);
-foreach($provincias_cod as $fila){
-    $separar = explode(";",$fila);
+$provincias_cod = explode("\n", $string);
+foreach ($provincias_cod as $fila) {
+    $separar = explode(";", $fila);
     $provincias[] = [
         'codigo' => $separar[0],
         'provincia' => $separar[1]
@@ -22,30 +22,34 @@ function letras($string)
     if (preg_match($regex, $string) != 1) {
         $mensaje = "No todos tus caracteres son letras";
     }
-    if($string != "") {
+    if ($string != "") {
         return $mensaje;
     }
 }
 
 //Escribe una función que devuelva un mensaje en caso de que el usuario escriba letras en el campo de entrada de
 // teléfono o en el de código postal.
-function numeros($string,$num,$nProv){
-    $regex = "/^[0-9]{".$num."}+$/"; //No puede tener letras, el ^ y +$ son para obligarle a que todo sean números
+function numeros($string, $num, $nProv)
+{
+    print_r('codigo postal'.$string.'<br/>');
+    $regex = "/^[0-9]{" . $num . "}+$/"; //No puede tener letras, el ^ y +$ son para obligarle a que todo sean números
     //La función preg_match devuelve uno cuando comprueba que toda la expresion son numeros
     //La función strlen nos devuelve la longitus del string que la igualamos a la cantidad que necesitamos
     if (preg_match($regex, $string) != 1) {
         $mensaje = "No todos tus caracteres son números o la cantidad de caracteres es diferente a " . $num;
     }
-    if ($nProv != substr($string, 0,2) && $num == 5){
-        $mensProv= "la provincia no coincide con el CP";
+    print_r('codigo: '.$nProv.'<br/>');
+    if ($nProv != substr($string, 0, 2) && $num == 5) {
+        $mensProv = "la provincia no coincide con el CP";
     }
-    if($string != "") {
+    if ($string != "") {
         return $mensaje . $mensProv;
     }
 }
 
 //funcion para el correo electronico
-function email($string){
+function email($string)
+{
 
     $regex = "/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}+$/"; //Estructura email: letras, numeros, ciertos
     // caracteres especiales + @ + letras, punto o guion + punto + mas letras de como minimo 2 de longitus y maximo 6.
@@ -53,12 +57,12 @@ function email($string){
     if (preg_match($regex, $string) != 1) {
         $mensaje = "No has introducido una direccion de email correcta";
     }
-    if($string != "") {
+    if ($string != "") {
         return $mensaje;
     }
 }
 
-//Función para comprobar los carácteres de la contraseña
+//Función para comprobar una dirección web
 function contrasenia($string)
 {
     $regex = "/((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^A-Za-z0-9])).{8,16}/"; //Estructura, que pueda contener en
@@ -69,12 +73,13 @@ function contrasenia($string)
     if (preg_match($regex, $string) != 1) {
         $mensaje = "La contraseña no cumple las normas, inserte una nueva";
     }
-    if($string != "") {
+    if ($string != "") {
         return $mensaje;
     }
 
 }
-//Función para comprobar una dirección web
+
+//Función para comprobar los carácteres de la contraseña
 function web($string)
 {
     $regex = "/^http[s]?:\/\/[\w]+([\.]+[\w]+)+$/"; //EStructura. tiene que empezar obligatoriamente por http p https://,
@@ -84,14 +89,14 @@ function web($string)
     if (preg_match($regex, $string) != 1) {
         $mensaje = "La web no cumple las normas, inserte una nueva";
     }
-    if($string != "") {
+    if ($string != "") {
         return $mensaje;
     }
 }
 
 //Comprobación de envío de formulario
 //con el if compruebo que he enviado el formulario
-if(isset($_POST['guardar'])) {
+if (isset($_POST['guardar'])) {
     //recojo los valores
     $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING);
     $apellido = filter_input(INPUT_POST, 'apellido', FILTER_SANITIZE_STRING);
@@ -102,13 +107,21 @@ if(isset($_POST['guardar'])) {
     $domicilio = filter_input(INPUT_POST, 'domicilio', FILTER_SANITIZE_STRING);
     $contrasena = filter_input(INPUT_POST, 'contrasena', FILTER_SANITIZE_STRING);
     $web = filter_input(INPUT_POST, 'web', FILTER_SANITIZE_STRING);
-    $provSelect= filter_input(INPUT_POST, 'select', FILTER_SANITIZE_STRING);
+    $provSelect = filter_input(INPUT_POST, 'select', FILTER_SANITIZE_STRING);
 
     //En caso de que los campos estén vacios
-    if (empty($nombre) or empty($apellidos) or empty($email) or empty($telefono)
-        or empty($postal) or empty($ciudad) or empty($domicilio) or empty($contrasena) or empty($web)){
-        $campoVacio = "El campo no puede estar vacío <br>";
-    }else {
+    if (empty($nombre)){$error_nombre = "Introduce un nombre<br>";}
+    if (empty($apellido)){$error_apellidos = "Introduce un apellido<br>";}
+    if (empty($email)){$error_email = "Introduce un email<br>";}
+    if (empty($telefono)){$error_telefono = "Introduce un telefono<br>";}
+    if (empty($postal)){$error_postal = "Introduce un código postal<br>";}
+    if (empty($ciudad)){$error_ciudad = "Introduce una ciudad<br>";}
+    if (empty($domicilio)){$error_domicilio = "Introduce un domicilio<br>";}
+    if (empty($contrasena)){$error_contrasena = "Introduce una contraseña<br>";}
+    if (empty($web)){$error_web = "Introduce una URL<br>";}
+    if (empty($provSelect)) {$error_provincia = "Selecciona una provincia <br>";}
+    if (!empty($nombre) and !empty($apellidos) and !empty($email) and !empty($telefono)
+        and !empty($postal) and !empty($ciudad) and !empty($domicilio) and !empty($contrasena) and !empty($web)){
         //Extraer emails de mis registros
         //me creo un array para almacenar mis datos del registro
         $todosDatos = [];
@@ -116,7 +129,7 @@ if(isset($_POST['guardar'])) {
         $string_email = file_get_contents('registros.csv');
         //uso el explode para separar mis diferentes líneas del fichero
         $emails_reg = explode("\n", $string_email);
-        //hago un foreach para separar dentro de cada líea del fichero cada campo
+        //hago un foreach para separar dentro de cada línea del fichero cada campo
         foreach ($emails_reg as $linea) {
             $separo = explode(";", $linea);
             //relleno mi array con cada campo
@@ -174,51 +187,70 @@ if(isset($_POST['guardar'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>¡Haz tu registro GRATIS!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="contenedor">
+    <div class="header">
+        <h1>¡Haz tu registro GRATIS!</h1>
+        <form action="index.php" method="post">
+            <fieldset>
+                <legend>Datos Personales</legend>
+                <label for="nombre">Nombre:</label> <input name="nombre" id="nombre" type="text" placeholder="Jose">
+                <p class="error"><?php echo letras($nombre); ?></p>
+                <p class="error"><?php echo $error_nombre ?></p>
+                <label for="apellido">Apellidos:</label> <input name="apellido" id="apellido" type="text"
+                                                                placeholder="García Pérez"><br/>
+                <p class="error"><?php echo letras($apellido); ?></p>
+                <p class="error"><?php echo $error_apellidos ?></p>
+                <label for="domicilio">Dirección:</label> <input name="domicilio" id="domicilio" type="text"
+                                                                 placeholder="C. Alustante, 13"><br/>
+                <p class="error"><?php echo $error_domicilio ?></p>
 
-<form action="index.php" method="post">
-    <fieldset>
-        <legend>Datos Personales</legend>
-        <label for="nombre">Nombre:</label> <input name="nombre" id="nombre" type="text" placeholder="Jose">
-        <?php echo letras($nombre); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="apellido">Apellidos:</label> <input name="apellido" id="apellido" type="text" placeholder="García Pérez"><br/>
-        <?php echo letras($apellido); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="domicilio">Dirección:</label> <input name="domicilio" id="domicilio" type="text" placeholder="C. Alustante, 13"><br/>
-        <p class="error"><?php echo $campoVacio ?></p>
+                <label for="ciudad">Ciudad:</label> <input name="ciudad" id="ciudad" type="text"
+                                                           placeholder="Madrid"><br/>
+                <p class="error"><?php echo letras($ciudad); ?></p>
+                <p class="error"><?php echo $error_ciudad ?></p>
+                <label for="e">Provincia:</label>
+                <select name="select">
+                    <option hidden selected>Selecciona una provincia</option>
+                    <?php foreach ($provincias as $provincia) { ?>
+                        <option value="<?php echo $provincia['codigo'] ?>"><?php echo $provincia['provincia'] ?> </option>
+                    <?php } ?>
+                </select>
+                <p class="error"><?php echo $error_provincia ?></p>
+                <label for="postal">Código postal:</label> <input name="postal" id="postal" type="text"
+                                                                  placeholder="28002"><br/>
+                <p class="error"><?php echo numeros($postal, 5, $provSelect); ?></p>
+                <p class="error"><?php echo $error_postal ?></p>
+                <label for="telefono">Teléfono:</label> <input name="telefono" id="telefono" type="tel"
+                                                               placeholder="123-45-67-89"><br/>
+                <p class="error"><?php echo numeros($telefono, 9, $provSelect); ?></p>
+                <p class="error"><?php echo $error_telefono ?></p>
+                <label for="email">Email:</label> <input name="email" id="email" type="email"
+                                                         placeholder="ejemplo@gmail.com">
+                <p class="error"><?php echo email($email);?></>
+                <p class="error"><?php echo $error_email ?></p>
+                <label for="contrasena">Contraseña:</label> <input name="contrasena" id="contrasena" type="password"
+                                                                   placeholder="**********">
+                <p class="error"><?php echo contrasenia($contrasena); ?></p>
+                <p class="error"><?php echo $error_contrasena ?></p>
+                <label for="web">Web <small>(debe empezar por http o https)</small>:</label> <input name="web" id="web" type="url"
+                                                                                                    placeholder="www.holamundo.com">
+                <p class="error"><?php echo web($web); ?></p>
+                <p class="error"><?php echo $error_web ?></p>
+                <input class="boton" type="submit" name="guardar" value="Guardar">
 
-        <label for="ciudad">Ciudad:</label> <input name="ciudad" id="ciudad" type="text" placeholder="Madrid"><br/>
-        <?php echo letras($ciudad); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="e">Provincia:</label>
-        <select name="select">
-            <option hidden selected>Selecciona una provincia</option>
-            <?php foreach ($provincias as $provincia){?>
-                <option value="<?php echo $provincia['codigo']?>" ><?php echo $provincia['provincia']?> </option>
-            <?php } ?>
-        </select>
-        <label for="postal">Código postal:</label> <input name="postal" id="postal" type="text" placeholder="28002"><br/>
-        <?php echo numeros($postal, 5, $provSelect); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="telefono">Teléfono:</label> <input name="telefono" id="telefono" type="tel" placeholder="123-45-67-89"><br/>
-        <?php echo numeros($telefono, 9, $provSelect); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="email">Email:</label> <input name="email" id="email" type="email" placeholder="ejemplo@gmail.com">
-        <?php echo email($email); echo $error;?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="contrasena">Contraseña:</label> <input name="contrasena" id="contrasena" type="password" placeholder="**********">
-        <?php echo contrasenia($contrasena); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <label for="web">Web (debe empezar por http o https):</label> <input name="web" id="web" type="url" placeholder="www.holamundo.com">
-        <?php echo web($web); ?>
-        <p class="error"><?php echo $campoVacio ?></p>
-        <input class="boton" type="submit" name="guardar" value="Guardar">
-
-    </fieldset>
-</form>
+            </fieldset>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
